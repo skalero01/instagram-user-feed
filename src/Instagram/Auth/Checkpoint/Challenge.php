@@ -71,6 +71,10 @@ class Challenge
         $res  = $this->client->request('GET', $this->checkPointUrl, $headers);
         $body = (string)$res->getBody();
         preg_match('/<script type="text\/javascript">window\._sharedData\s?=(.+);<\/script>/', $body, $matches);
+        if(!isset($matches[1])) {
+            \Log::info($body);
+            throw new InstagramAuthException('Unable to fetch challenge content');
+        }
 
         return json_decode($matches[1]);
     }

@@ -110,9 +110,12 @@ class Login
         }
 
         CacheResponse::setResponse($query);
+        $json = (string) $query->getBody();
+        if(!json_validate($json)) {
+            throw new InstagramAuthException('Invalid JSON response');
+        }
 
-        $response = json_decode((string) $query->getBody());
-
+        $response = json_decode($json);
         if (property_exists($response, 'authenticated') && $response->authenticated == true) {
             return $cookieJar;
         } elseif (property_exists($response, 'error_type') && $response->error_type === 'generic_request_error') {
